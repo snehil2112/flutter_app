@@ -221,8 +221,8 @@ class _DetailState extends State<Detail> {
                   child: FadeInImage.assetNetwork(
                     placeholder: 'assets/placeholder.jpg',
                     image: book['cover'],
-                    fit: BoxFit.fill
-                    ,),
+                    fit: BoxFit.fill,
+                    height:MediaQuery.of(context).size.height ,),
                   onTap: () {
                     showDialog(context: context,
                         builder: (BuildContext context) {
@@ -253,179 +253,179 @@ class _DetailState extends State<Detail> {
               ),
             ),
             Container(
-               width: MediaQuery.of(context).size.width,
-               margin: EdgeInsets.only(top: MediaQuery.of(context).size.height/3),
-               padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(top: MediaQuery.of(context).size.height/3),
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
 //            alignment: Alignment.topLeft,
-               decoration: BoxDecoration(
-                   color: Colors.white,
-                   boxShadow: [BoxShadow(color: Colors.grey,
-                       offset: Offset(0.0, 0.0),
-                       blurRadius: 3.0,
-                       spreadRadius: 1.0),]
-               ),
-               child: Column(
-                 crossAxisAlignment: CrossAxisAlignment.start,
-                 children: <Widget>[
-                   Text(book['title'], style: TextStyle(color: Colors.black, fontSize: 22.0),textAlign: TextAlign.left,),
-                   Padding(padding: EdgeInsets.only(top: 5.0),),
-                   Text(book['author'], style: TextStyle(color: Colors.grey[800], fontSize: 16.0),textAlign: TextAlign.left,),
-                   Padding(padding: EdgeInsets.only(top: 5.0),),
-                   Text(book['publisher'], style: TextStyle(color: Colors.grey[600], fontSize: 16.0),textAlign: TextAlign.left,),
-                   Padding(padding: EdgeInsets.only(top: 10.0)),
-                   task.status == DownloadTaskStatus.complete? Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: <Widget>[
-                       Expanded(
-                         flex: 1,
-                         child:  OutlineButton(onPressed: () {
-                           _openDownloadedFile(task).then((success) {
-                             if(!success) {
-                               Scaffold.of(context).showSnackBar(SnackBar(content: Text('Cannot open file'),));
-                             }
-                           });
-                         }, child: Text('Open'),
-                           textColor: Colors.blue,
-                           borderSide: BorderSide(color: Colors.blue),
-                         ),
-                       ),
-                       Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
-                       Expanded(
-                         flex: 1,
-                         child: RaisedButton(onPressed: () {
-                           _delete(task);
-                         },
-                           child: Text('Delete', style: prefix1.TextStyle(color: Colors.white),),
-                           color: Colors.blue,),
-                       )
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [BoxShadow(color: Colors.grey,
+                      offset: Offset(0.0, 0.0),
+                      blurRadius: 3.0,
+                      spreadRadius: 1.0),]
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(book['title'], style: TextStyle(color: Colors.black, fontSize: 22.0),textAlign: TextAlign.left,),
+                  Padding(padding: EdgeInsets.only(top: 5.0),),
+                Text(book['author'], style: TextStyle(color: Colors.grey[800], fontSize: 16.0),textAlign: TextAlign.left,),
+                Padding(padding: EdgeInsets.only(top: 5.0),),
+                Text(book['publisher'], style: TextStyle(color: Colors.grey[600], fontSize: 16.0),textAlign: TextAlign.left,),
+                Padding(padding: EdgeInsets.only(top: 10.0)),
+                  task.status == DownloadTaskStatus.complete? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child:  OutlineButton(onPressed: () {
+                          _openDownloadedFile(task).then((success) {
+                            if(!success) {
+                              Scaffold.of(context).showSnackBar(SnackBar(content: Text('Cannot open file'),));
+                            }
+                          });
+                        }, child: Text('Open'),
+                          textColor: Colors.blue,
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.symmetric(horizontal: 5.0)),
+                      Expanded(
+                        flex: 1,
+                        child: RaisedButton(onPressed: () {
+                          _delete(task);
+                        },
+                          child: Text('Delete', style: prefix1.TextStyle(color: Colors.white),),
+                          color: Colors.blue,),
+                      )
 
-                     ],
-                   )
-                       :task.status == DownloadTaskStatus.running?Column(
-                     children: <Widget>[
-                       Row(
-                         mainAxisAlignment: MainAxisAlignment.start,
-                         children: <Widget>[
-                           Text('Downloading...', style: TextStyle(color: Colors.grey), textAlign: TextAlign.left,),
-                           Spacer(),
-                           Text((task.progress).toString()+'%', style: TextStyle(color: Colors.grey)),
-                           Padding(padding: EdgeInsets.only(right: 40.0),)
-                         ],
-                       ),
+                    ],
+                  )
+                      :task.status == DownloadTaskStatus.running?Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text('Downloading...', style: TextStyle(color: Colors.grey), textAlign: TextAlign.left,),
+                          Spacer(),
+                          Text((task.progress).toString()+'%', style: TextStyle(color: Colors.grey)),
+                          Padding(padding: EdgeInsets.only(right: 40.0),)
+                        ],
+                      ),
 
-                       Row(children: <Widget>[
-                         SizedBox(
-                           width: MediaQuery.of(context).size.width-70,
-                           child: LinearProgressIndicator(value: task.progress/100,),
-                         ),
-                         Padding(padding: EdgeInsets.only(right: 5.0),),
-                         GestureDetector(
-                           onTap: () {
-                             _cancelDownload(task);
-                           },
-                           child: Icon(Icons.close, color: Colors.grey,),
-                         )
-                       ],)
-                     ],
-                   ):Row(
-                     children: <Widget>[
-                       Expanded(
-                           flex: 3,
-                           child: RaisedButton(onPressed: () {
-                             setState(() {
-                               downloading = true;
-                             });
-                             _requestDownload(task);
+                      Row(children: <Widget>[
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width-70,
+                          child: LinearProgressIndicator(value: task.progress/100,),
+                        ),
+                        Padding(padding: EdgeInsets.only(right: 5.0),),
+                        GestureDetector(
+                          onTap: () {
+                            _cancelDownload(task);
+                          },
+                          child: Icon(Icons.close, color: Colors.grey,),
+                        )
+                      ],)
+                    ],
+                  ):Row(
+                    children: <Widget>[
+                      Expanded(
+                          flex: 3,
+                          child: RaisedButton(onPressed: () {
+                            setState(() {
+                              downloading = true;
+                            });
+                            _requestDownload(task);
 //                          downloadBook();
-                           }, child: Text('Download '+book['extension']+' ( '+book['size']+' )',style: TextStyle(color: Colors.white),),
-                             color: Colors.blue,
-                           ))
-                     ],
-                   ),
-                   Divider(color: Colors.grey[700],),
-                   Text(book['description'], style: prefix1.TextStyle(color: Colors.grey),),
-                   Padding(padding: EdgeInsets.only(top: 20.0),),
-                   Table(
-                     children: [
-                       TableRow(
-                           children: [
-                             Text('Title', style: prefix1.TextStyle(color: Colors.grey),),
-                             Text(book['title']+'\n', style: prefix1.TextStyle(color: Colors.grey))
-                           ]
-                       ),
-                       TableRow(
-                           children: [
-                             Text('Author', style: prefix1.TextStyle(color: Colors.grey),),
-                             Text(book['author']+'\n', style: prefix1.TextStyle(color: Colors.grey))
-                           ]
-                       ),
-                       TableRow(
-                           children: [
-                             Text('Volume', style: prefix1.TextStyle(color: Colors.grey),),
-                             Text(book['volume']+'\n', style: prefix1.TextStyle(color: Colors.grey))
-                           ]
-                       ),
-                       TableRow(
-                           children: [
-                             Text('Series', style: prefix1.TextStyle(color: Colors.grey),),
-                             Text(book['series']+'\n', style: prefix1.TextStyle(color: Colors.grey))
-                           ]
-                       ),
-                       TableRow(
-                           children: [
-                             Text('Edition', style: prefix1.TextStyle(color: Colors.grey),),
-                             Text(book['edition']+'\n', style: prefix1.TextStyle(color: Colors.grey))
-                           ]
-                       ),
-                       TableRow(
-                           children: [
-                             Text('Publication', style: prefix1.TextStyle(color: Colors.grey),),
-                             Text(book['publisher']+'\n', style: prefix1.TextStyle(color: Colors.grey))
-                           ]
-                       ),
-                       TableRow(
-                           children: [
-                             Text('Pages', style: prefix1.TextStyle(color: Colors.grey),),
-                             Text(book['pages']+'\n', style: prefix1.TextStyle(color: Colors.grey))
-                           ]
-                       ),
-                       TableRow(
-                           children: [
-                             Text('Language', style: prefix1.TextStyle(color: Colors.grey),),
-                             Text(book['language']+'\n', style: prefix1.TextStyle(color: Colors.grey))
-                           ]
-                       ),
-                       TableRow(
-                           children: [
-                             Text('Size', style: prefix1.TextStyle(color: Colors.grey),),
-                             Text(book['size']+'\n', style: prefix1.TextStyle(color: Colors.grey))
-                           ]
-                       ),
-                       TableRow(
-                           children: [
-                             Text('Year', style: prefix1.TextStyle(color: Colors.grey),),
-                             Text(book['year']+'\n', style: prefix1.TextStyle(color: Colors.grey))
-                           ]
-                       ),
-                     ],
-                   ),
-                   Row(
-                     children: <Widget>[
-                       Expanded(
-                         child: OutlineButton(
-                           textColor: Colors.blue,
-                           borderSide: BorderSide(color: Colors.blue),
-                           child: Text('Share'),
-                           onPressed: () {
-                             Share.share("${task.book['title']} by ${task.book['author']}. \n Download at: \n${task.book['download']}");
-                           },
-                         ),
-                       )
-                     ],
-                   )
-                 ],
-               ),
-             ),
+                          }, child: Text('Download '+book['extension']+' ( '+book['size']+' )',style: TextStyle(color: Colors.white),),
+                            color: Colors.blue,
+                          ))
+                    ],
+                  ),
+                  Divider(color: Colors.grey[700],),
+                  Text(book['description'], style: prefix1.TextStyle(color: Colors.grey),),
+                  Padding(padding: EdgeInsets.only(top: 20.0),),
+                  Table(
+                    children: [
+                      TableRow(
+                        children: [
+                          Text('Title', style: prefix1.TextStyle(color: Colors.grey),),
+                          Text(book['title']+'\n', style: prefix1.TextStyle(color: Colors.grey))
+                        ]
+                      ),
+                      TableRow(
+                          children: [
+                            Text('Author', style: prefix1.TextStyle(color: Colors.grey),),
+                            Text(book['author']+'\n', style: prefix1.TextStyle(color: Colors.grey))
+                          ]
+                      ),
+                      TableRow(
+                          children: [
+                            Text('Volume', style: prefix1.TextStyle(color: Colors.grey),),
+                            Text(book['volume']+'\n', style: prefix1.TextStyle(color: Colors.grey))
+                          ]
+                      ),
+                      TableRow(
+                          children: [
+                            Text('Series', style: prefix1.TextStyle(color: Colors.grey),),
+                            Text(book['series']+'\n', style: prefix1.TextStyle(color: Colors.grey))
+                          ]
+                      ),
+                      TableRow(
+                          children: [
+                            Text('Edition', style: prefix1.TextStyle(color: Colors.grey),),
+                            Text(book['edition']+'\n', style: prefix1.TextStyle(color: Colors.grey))
+                          ]
+                      ),
+                      TableRow(
+                          children: [
+                            Text('Publication', style: prefix1.TextStyle(color: Colors.grey),),
+                            Text(book['publisher']+'\n', style: prefix1.TextStyle(color: Colors.grey))
+                          ]
+                      ),
+                      TableRow(
+                          children: [
+                            Text('Pages', style: prefix1.TextStyle(color: Colors.grey),),
+                            Text(book['pages']+'\n', style: prefix1.TextStyle(color: Colors.grey))
+                          ]
+                      ),
+                      TableRow(
+                          children: [
+                            Text('Language', style: prefix1.TextStyle(color: Colors.grey),),
+                            Text(book['language']+'\n', style: prefix1.TextStyle(color: Colors.grey))
+                          ]
+                      ),
+                      TableRow(
+                          children: [
+                            Text('Size', style: prefix1.TextStyle(color: Colors.grey),),
+                            Text(book['size']+'\n', style: prefix1.TextStyle(color: Colors.grey))
+                          ]
+                      ),
+                      TableRow(
+                          children: [
+                            Text('Year', style: prefix1.TextStyle(color: Colors.grey),),
+                            Text(book['year']+'\n', style: prefix1.TextStyle(color: Colors.grey))
+                          ]
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: OutlineButton(
+                          textColor: Colors.blue,
+                          borderSide: BorderSide(color: Colors.blue),
+                          child: Text('Share'),
+                          onPressed: () {
+                            Share.share("${task.book['title']} by ${task.book['author']}. \n Download at: \n${task.book['download']}");
+                          },
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ))

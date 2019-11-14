@@ -74,7 +74,10 @@ class _SearchState extends State<Search> {
         backgroundColor: Colors.white,
         title: Row(
           children: <Widget>[
-            Text(query, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: 18.0),),
+            Expanded(
+              flex: 10,
+              child: Text(query, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: 18.0), overflow: TextOverflow.fade, ),
+            ),
             Spacer(),
 //            Icon(Icons.search, color: Colors.grey,)
             Tap()
