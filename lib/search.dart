@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_app/detail.dart';
 import 'package:flutter_app/modal.dart';
 import 'package:flutter_app/searchBar.dart';
+import 'package:badges/badges.dart';
 
 import 'loader.dart';
 
@@ -138,7 +139,25 @@ class _SearchState extends State<Search> {
                   ),
                   subtitle: new Container(
                     padding: EdgeInsets.only(top: 5.0),
-                    child: new Text('by '+data[index]['author'],maxLines: 2, overflow: TextOverflow.ellipsis, style: new TextStyle(fontSize: 15.0, color: Colors.grey),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          flex: 7,
+                          child: new Text('by '+data[index]['author'],maxLines: 1, overflow: TextOverflow.ellipsis, style: new TextStyle(fontSize: 15.0, color: Colors.grey),
+                          ),
+                        ),
+                        Spacer(),
+                        Badge(
+                          badgeColor: data[index]['extension'] == 'pdf'?Colors.red:Colors.green,
+                          badgeContent: Text(data[index]['extension'].toString(), style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                          shape: BadgeShape.square,
+                          elevation: 0,
+                          borderRadius: 5.0,
+                          toAnimate: false,
+                          padding: EdgeInsets.all(3.0),
+
+                        )
+                      ],
                     ),
                   ),
                 ),
