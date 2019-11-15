@@ -33,7 +33,7 @@ class _SearchState extends State<Search> {
     this.getJsonData();
   }
 
-  Future<String> getJsonData() async{
+  void getJsonData() async{
     if(query == null) {
       query = widget.query;
       page = 1;
@@ -43,35 +43,40 @@ class _SearchState extends State<Search> {
       display = query;
     }
     String url = "https://libgenesis.herokuapp.com/searchBooks/"+query+"/"+page.toString();
-    var response = await http.get(url);
-    if(!mounted)
-      return '';
-    setState(() {
-      resp = true;
-    });
-    if (response.statusCode == 200) {
-      // If the call to the server was successful, parse the JSON.
-      //print(response.body);
+    try {
+      var response = await http.get(url);
       if(!mounted)
-        return '';
+        return;
       setState(() {
-        error = null;
-        data.addAll(json.decode(response.body));
+        resp = true;
       });
-
-      return 'Success';
-    }
-    else {
-      // If that call was not successful, throw an error.
-      if(!mounted)
-        return '';
+      if (response.statusCode == 200) {
+        // If the call to the server was successful, parse the JSON.
+        //print(response.body);
+        if(!mounted)
+          return;
+        setState(() {
+          error = null;
+          data.addAll(json.decode(response.body));
+        });
+      }
+      else {
+        // If that call was not successful, throw an error.
+        if(!mounted)
+          return;
+        setState(() {
+          String temp = json.decode(response.body)['message'];
+          var arr = temp.split(":");
+          if(arr.length > 1)
+            error = arr[1];
+          else
+            error = arr[0];
+        });
+      }
+    }catch(e) {
       setState(() {
-        String temp = json.decode(response.body)['message'];
-        var arr = temp.split(":");
-        if(arr.length > 1)
-          error = arr[1];
-        else
-          error = arr[0];
+        error = 'Check your connection!';
+        resp = true;
       });
     }
   }
@@ -100,9 +105,9 @@ class _SearchState extends State<Search> {
         ],
       ),
       body: !resp?Loader():error!=null?Container(
-        padding: EdgeInsets.symmetric(
-            vertical: MediaQuery.of(context).size.height/3,
-            horizontal: MediaQuery.of(context).size.width/4 ),
+        padding: EdgeInsets.only(
+            top: MediaQuery.of(context).size.height/3,
+            left: MediaQuery.of(context).size.width/4.5 ),
         child: Column(
           children: <Widget>[
             Text(error,
