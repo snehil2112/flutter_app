@@ -30,6 +30,7 @@ dependencies:
   permission_handler: any
   share: ^0.6.3+1
   splashscreen: any
+  badges: ^1.1.0
   flutter:
     sdk: flutter
 
@@ -50,6 +51,18 @@ flutter:
   assets:
     - assets/placeholder.jpg
     - assets/logo.jpg
+    - assets/technology.png
+    - assets/computer.jpg
+    - assets/biology.gif
+    - assets/astrology.jpg
+    - assets/beauty.png
+    - assets/business.png
+    - assets/chemistry.png
+    - assets/economy.png
+    - assets/geography.png
+    - assets/history.jpg
+    - assets/literature.png
+    - assets/physics.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

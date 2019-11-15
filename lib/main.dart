@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter_app/downloads.dart';
+import 'package:flutter_app/recommended.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 
 import 'dart:async';
@@ -52,33 +53,44 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    this.getJsonData();
+    try {
+      this.getJsonData();
+    } catch(e) {
+      setState(() {
+        error = 'Check Your Connection';
+      });
+    }
   }
 
-  Future<String> getJsonData() async{
+  void getJsonData() async{
     error=null;
     String url = "https://libgenesis.herokuapp.com/latest";
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      // If the call to the server was successful, parse the JSON.
+    try {
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        // If the call to the server was successful, parse the JSON.
 //      print(response.body);
 
-      setState(() {
-        data = json.decode(response.body);
-      });
+        setState(() {
+          data = json.decode(response.body);
+        });
 
-      return 'Success';
-    } else {
-      // If that call was not successful, throw an error.
+      } else {
+        // If that call was not successful, throw an error.
 
 //      throw Exception('Failed to load post');
+        setState(() {
+          String temp = json.decode(response.body)['message'];
+          var arr = temp.split(":");
+          if(arr.length > 1)
+            error = arr[1];
+          else
+            error = arr[0];
+        });
+      }
+    }catch(e) {
       setState(() {
-        String temp = json.decode(response.body)['message'];
-        var arr = temp.split(":");
-        if(arr.length > 1)
-          error = arr[1];
-        else
-          error = arr[0];
+        error = 'Check Your Connection!';
       });
     }
   }
@@ -100,10 +112,10 @@ class HomePageState extends State<HomePage> {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            child: Text('Drawer Header'),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-            ),
+            child: Icon(Icons.account_circle, size: 100, ),
+//            decoration: BoxDecoration(
+//              color: Colors.white,
+//            ),
           ),
           ListTile(
             title: Text('Favourites'),
@@ -135,7 +147,7 @@ class HomePageState extends State<HomePage> {
           backgroundColor: Colors.white,
           bottom: TabBar(tabs: [
             Tab(text: 'Latest',),
-            Tab(text: 'Random',)
+            Tab(text: 'Recommended',)
           ],
             indicatorColor: Colors.lightBlue,
             labelColor: Colors.lightBlue,
@@ -166,9 +178,9 @@ class HomePageState extends State<HomePage> {
         body: TabBarView(children: [
           error!=null
               ?Container(
-            padding: EdgeInsets.symmetric(
-                vertical: MediaQuery.of(context).size.height/3,
-                horizontal: MediaQuery.of(context).size.width/4 ),
+            padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height/3,
+                left: MediaQuery.of(context).size.width/20 ),
             child: Column(
               children: <Widget>[
                 Text(error,
@@ -186,7 +198,9 @@ class HomePageState extends State<HomePage> {
             ),
           )
               :data == null?Center(child: CircularProgressIndicator()):Latest(data: data,),
-          Center(child: Text('Random Books'),)
+          SingleChildScrollView(
+            child: Recommended(),
+          )
         ]),
 
       ),

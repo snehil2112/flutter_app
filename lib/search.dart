@@ -13,7 +13,8 @@ import 'loader.dart';
 class Search extends StatefulWidget {
   String query;
   int page;
-  Search({Key key, @required this.query, @required this.page}): super(key: key);
+  String display;
+  Search({Key key, @required this.query, @required this.page, this.display}): super(key: key);
 
   @override
   _SearchState createState() => _SearchState();
@@ -22,6 +23,7 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   List data=[];
   String query;
+  String display;
   int page;
   bool resp = false;
   String error;
@@ -35,16 +37,23 @@ class _SearchState extends State<Search> {
     if(query == null) {
       query = widget.query;
       page = 1;
+      display = widget.display;
+    }
+    if(display == null) {
+      display = query;
     }
     String url = "https://libgenesis.herokuapp.com/searchBooks/"+query+"/"+page.toString();
     var response = await http.get(url);
+    if(!mounted)
+      return '';
     setState(() {
       resp = true;
     });
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON.
       //print(response.body);
-
+      if(!mounted)
+        return '';
       setState(() {
         error = null;
         data.addAll(json.decode(response.body));
@@ -54,6 +63,8 @@ class _SearchState extends State<Search> {
     }
     else {
       // If that call was not successful, throw an error.
+      if(!mounted)
+        return '';
       setState(() {
         String temp = json.decode(response.body)['message'];
         var arr = temp.split(":");
@@ -77,7 +88,7 @@ class _SearchState extends State<Search> {
           children: <Widget>[
             Expanded(
               flex: 10,
-              child: Text(query, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: 18.0), overflow: TextOverflow.fade, ),
+              child: Text(display, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: 18.0), overflow: TextOverflow.fade, ),
             ),
             Spacer(),
 //            Icon(Icons.search, color: Colors.grey,)

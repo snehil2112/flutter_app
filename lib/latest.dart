@@ -3,12 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'package:flutter_app/loader.dart';
 import 'package:flutter_app/modal.dart';
-import 'package:loading/indicator.dart';
-import 'package:loading/loading.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class Latest extends StatefulWidget {
   @override
