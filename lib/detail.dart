@@ -8,9 +8,7 @@ import 'dart:async';
 import 'dart:io' as io;
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:permission_handler/permission_handler.dart';
-//import 'package:advanced_share/advanced_share.dart';
 import 'package:share/share.dart';
-//import 'package:simple_share/simple_share.dart';
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -179,6 +177,7 @@ class _DetailState extends State<Detail> {
           task.taskId = work.taskId;
           task.status = work.status;
           task.progress = work.progress;
+          task.savePath = work.savedDir;
 //          task.file = work.savedDir+'/'+work.filename;
 //          print(task.file);
         }
@@ -417,7 +416,13 @@ class _DetailState extends State<Detail> {
                           borderSide: BorderSide(color: Colors.blue),
                           child: Text('Share'),
                           onPressed: () {
-                            Share.share("${task.book['title']} by ${task.book['author']}. \n Download at: \n${task.book['download']}");
+//                            ShareExtend.share("${task.book['title']} by ${task.book['author']}. \n Download at: \n${task.book['download']}", "text");
+//                              ShareExtend.share('hello', "text");
+                            final RenderBox box = context.findRenderObject();
+                              Share.file(path: Uri.file("${task.savePath}/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}").toFilePath(), text: 'hello', title: task.book['title']).share(
+                                  sharePositionOrigin:
+                                  box.localToGlobal(Offset.zero) &
+                                  box.size);
                           },
                         ),
                       )
@@ -435,7 +440,7 @@ class _DetailState extends State<Detail> {
 
 class _TaskInfo {
   final book;
-
+  String savePath;
   String taskId;
   int progress = 0;
   DownloadTaskStatus status = DownloadTaskStatus.undefined;
@@ -444,9 +449,3 @@ class _TaskInfo {
   _TaskInfo({this.book});
 }
 
-class _ItemHolder {
-  final String name;
-  final _TaskInfo task;
-
-  _ItemHolder({this.name, this.task});
-}
