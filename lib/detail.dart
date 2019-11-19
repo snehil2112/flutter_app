@@ -113,6 +113,21 @@ class _DetailState extends State<Detail> {
     return false;
   }
 
+  void share() {
+    final RenderBox box = context.findRenderObject();
+    if(task.status == DownloadTaskStatus.complete) {
+      Share.file(path: Uri.file("${task.savePath}/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}").toFilePath(), text: 'hello', title: task.book['title']).share(
+          sharePositionOrigin:
+          box.localToGlobal(Offset.zero) &
+          box.size);
+    } else {
+      Share.plainText(title: task.book['title'], text: task.book['title']+" by "+task.book['author']+". Download at: "+task.book['download']).share(
+          sharePositionOrigin:
+          box.localToGlobal(Offset.zero) &
+          box.size);
+    }
+  }
+
   void _bindBackgroundIsolate() {
     bool isSuccess = IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');
@@ -418,11 +433,8 @@ class _DetailState extends State<Detail> {
                           onPressed: () {
 //                            ShareExtend.share("${task.book['title']} by ${task.book['author']}. \n Download at: \n${task.book['download']}", "text");
 //                              ShareExtend.share('hello', "text");
-                            final RenderBox box = context.findRenderObject();
-                              Share.file(path: Uri.file("${task.savePath}/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}").toFilePath(), text: 'hello', title: task.book['title']).share(
-                                  sharePositionOrigin:
-                                  box.localToGlobal(Offset.zero) &
-                                  box.size);
+                          share();
+
                           },
                         ),
                       )
