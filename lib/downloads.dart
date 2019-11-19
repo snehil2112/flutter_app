@@ -44,6 +44,10 @@ class _DownloadsState extends State<Downloads> {
     load();
   }
 
+  void _cancelDownload(var task) async {
+    await FlutterDownloader.cancel(taskId: task.taskId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +74,9 @@ class _DownloadsState extends State<Downloads> {
                     LinearProgressIndicator(value: ongoing[index].progress/100,)
                   ],
                 ),
-                trailing: IconButton(icon: Icon(Icons.delete),),
+                trailing: IconButton(icon: Icon(Icons.delete),onPressed: () {
+                  _cancelDownload(ongoing[index]);
+                },),
               )
             ],
           ))

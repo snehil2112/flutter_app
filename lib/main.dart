@@ -23,16 +23,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SplashScreen(
-      seconds: 2,
+      seconds: 6,
       navigateAfterSeconds: HomePage(),
-      title: Text('LibGen', style: TextStyle(
+      title: Text('InfiniteBooks', style: TextStyle(
           color: Colors.teal,
           fontSize: 30.0,
           fontWeight: FontWeight.bold
       ),),
-      image: Image.asset('assets/logo.jpg',),
+      image: Image.asset('assets/logo.gif',),
       backgroundColor: Colors.white,
-      photoSize: 100,
+      photoSize: 150,
       loaderColor: Colors.transparent,
     );
   }

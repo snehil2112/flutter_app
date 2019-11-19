@@ -29,6 +29,7 @@ dependencies:
   flutter_downloader: any
   permission_handler: any
   share: ^0.6.3+1
+  share_extend: any
   splashscreen: any
   badges: ^1.1.0
   flutter:
@@ -63,6 +64,7 @@ flutter:
     - assets/history.jpg
     - assets/literature.png
     - assets/physics.png
+    - assets/logo.gif
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

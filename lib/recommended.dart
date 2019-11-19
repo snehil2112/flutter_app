@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/bookloader.dart';
 import 'package:flutter_app/suggestion.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -108,7 +109,7 @@ class _RecommendedState extends State<Recommended> {
               ),
             ),
           ):book1 == null
-              ?Center(child: CircularProgressIndicator(),)
+              ?BookLoader()
               :Suggestion(books: book1,),
           Padding(padding: EdgeInsets.only(top: 15.0),),
           Text('Game of Thrones Series',textAlign: TextAlign.left, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.grey[700]),),
@@ -128,7 +129,7 @@ class _RecommendedState extends State<Recommended> {
               ),
             ),
           ):book2 == null
-              ?Center(child: CircularProgressIndicator(),)
+              ?BookLoader()
               :Suggestion(books: book2,)
         ],
       )
