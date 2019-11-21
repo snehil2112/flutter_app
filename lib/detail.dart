@@ -3,12 +3,16 @@ import 'dart:async' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart' as prefix1;
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'dart:io' as io;
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:share/share.dart';
+import 'package:flutter_share/flutter_share.dart';
+//import 'package:share/share.dart';
+//import 'package:share_extend/share_extend.dart';
+// import 'package:simple_share/simple_share.dart';
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -113,18 +117,50 @@ class _DetailState extends State<Detail> {
     return false;
   }
 
-  void share() {
+  void share() async{
+    var dir = await getExternalStorageDirectory();
     final RenderBox box = context.findRenderObject();
     if(task.status == DownloadTaskStatus.complete) {
-      Share.file(path: Uri.file("${task.savePath}/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}").toFilePath(), text: 'hello', title: task.book['title']).share(
-          sharePositionOrigin:
-          box.localToGlobal(Offset.zero) &
-          box.size);
+      // ShareExtend.share("${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}", "file");
+//       Share.file(path: Uri.file("${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}").toFilePath(),
+//           text: task.book['title']+" by "+task.book['author']+". Download at: "+task.book['download'],
+//           title: task.book['title']).share(
+//           sharePositionOrigin:
+//           box.localToGlobal(Offset.zero) &
+//             box.size);
+//      final uri = Uri.file("${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}");
+//      SimpleShare.share(
+//        uri: uri.toString(),
+//        title: task.book['title'],
+//        subject: task.book['title']
+//      );
+
+
+//      var dir = await getExternalStorageDirectory();
+//      try {
+//        final ByteData bytes = await rootBundle.load("${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}");
+//        await WcFlutterShare.share(
+//            sharePopupTitle: 'share',
+//            fileName: task.book['title'],
+//            mimeType: 'file',
+//            bytesOfFile: bytes.buffer.asUint8List());
+//      } catch (e) {
+//        print('error: $e');
+//      }
+    FlutterShare.shareFile(
+      title: task.book['title'],
+      text: task.book['title']+" by "+task.book['author'],
+      filePath: "${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}" ,
+    );
+//    Share.shareFile(io.File("${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}"));
     } else {
-      Share.plainText(title: task.book['title'], text: task.book['title']+" by "+task.book['author']+". Download at: "+task.book['download']).share(
-          sharePositionOrigin:
-          box.localToGlobal(Offset.zero) &
-          box.size);
+//      Share.share("Hello");
+FlutterShare.share(
+      title: task.book['title'],
+      text: task.book['title']+" by "+task.book['author'],
+      linkUrl: task.book['download'],
+      chooserTitle: task.book['title']
+    );
     }
   }
 
@@ -434,7 +470,6 @@ class _DetailState extends State<Detail> {
 //                            ShareExtend.share("${task.book['title']} by ${task.book['author']}. \n Download at: \n${task.book['download']}", "text");
 //                              ShareExtend.share('hello', "text");
                           share();
-
                           },
                         ),
                       )
