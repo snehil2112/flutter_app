@@ -10,9 +10,6 @@ import 'dart:io' as io;
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_share/flutter_share.dart';
-//import 'package:share/share.dart';
-//import 'package:share_extend/share_extend.dart';
-// import 'package:simple_share/simple_share.dart';
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -36,7 +33,6 @@ class _DetailState extends State<Detail> {
   String _localPath;
   ReceivePort _port = ReceivePort();
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void dispose() {
@@ -72,20 +68,6 @@ class _DetailState extends State<Detail> {
     await FlutterDownloader.cancel(taskId: task.taskId);
   }
 
-//  void _pauseDownload(_TaskInfo task) async {
-//    await FlutterDownloader.pause(taskId: task.taskId);
-//  }
-//
-//  void _resumeDownload(_TaskInfo task) async {
-//    String newTaskId = await FlutterDownloader.resume(taskId: task.taskId);
-//    task.taskId = newTaskId;
-//  }
-//
-//  void _retryDownload(_TaskInfo task) async {
-//    String newTaskId = await FlutterDownloader.retry(taskId: task.taskId);
-//    task.taskId = newTaskId;
-//  }
-
   Future<bool> _openDownloadedFile(_TaskInfo task) {
     return FlutterDownloader.open(taskId: task.taskId);
   }
@@ -119,42 +101,13 @@ class _DetailState extends State<Detail> {
 
   void share() async{
     var dir = await getExternalStorageDirectory();
-    final RenderBox box = context.findRenderObject();
     if(task.status == DownloadTaskStatus.complete) {
-      // ShareExtend.share("${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}", "file");
-//       Share.file(path: Uri.file("${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}").toFilePath(),
-//           text: task.book['title']+" by "+task.book['author']+". Download at: "+task.book['download'],
-//           title: task.book['title']).share(
-//           sharePositionOrigin:
-//           box.localToGlobal(Offset.zero) &
-//             box.size);
-//      final uri = Uri.file("${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}");
-//      SimpleShare.share(
-//        uri: uri.toString(),
-//        title: task.book['title'],
-//        subject: task.book['title']
-//      );
-
-
-//      var dir = await getExternalStorageDirectory();
-//      try {
-//        final ByteData bytes = await rootBundle.load("${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}");
-//        await WcFlutterShare.share(
-//            sharePopupTitle: 'share',
-//            fileName: task.book['title'],
-//            mimeType: 'file',
-//            bytesOfFile: bytes.buffer.asUint8List());
-//      } catch (e) {
-//        print('error: $e');
-//      }
     FlutterShare.shareFile(
       title: task.book['title'],
       text: task.book['title']+" by "+task.book['author'],
       filePath: "${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}" ,
     );
-//    Share.shareFile(io.File("${dir.path}/Download/${task.book['title'].toString().replaceAll("/", "")+task.book['id'].toString().replaceAll("/", "")+'.'+task.book['extension']}"));
     } else {
-//      Share.share("Hello");
 FlutterShare.share(
       title: task.book['title'],
       text: task.book['title']+" by "+task.book['author'],
@@ -201,24 +154,6 @@ FlutterShare.share(
     send.send([id, status, prog]);
   }
 
-//  void fetchFiles() async {
-//    var dir = await getExternalStorageDirectory();
-//    List files = io.Directory(dir.path).listSync();
-////    print(files);
-//    List name = [];
-//    files.forEach((element) {
-//      name.add(element.toString().replaceAll("File: ", ""));
-//    });
-////    print(name);
-//    var search = "'${dir.path}/${book['id']}.${book['extension']}'";
-////    print(search);
-//    if(name.contains(search)){
-//      setState(() {
-//        downloaded = true;
-//      });
-//    }
-//  }
-
   Future<Null> _prepare() async {
     final tasks = await FlutterDownloader.loadTasks();
 
@@ -259,7 +194,6 @@ FlutterShare.share(
 
   @override
   Widget build(BuildContext context) {
-    final platform = Theme.of(context).platform;
     return Scaffold(
       body: Builder(builder: (context) =>
       _isLoading?Center(child:CircularProgressIndicator()):SingleChildScrollView(
@@ -381,11 +315,14 @@ FlutterShare.share(
                     children: <Widget>[
                       Expanded(
                           flex: 3,
-                          child: RaisedButton(onPressed: () {
-                            setState(() {
-                              downloading = true;
-                            });
-                            _requestDownload(task);
+                          child: RaisedButton(onPressed: () async {
+                            _permissionReady = await _checkPermission();
+                            if(_permissionReady) {
+                              setState(() {
+                                downloading = true;
+                              });
+                              _requestDownload(task);
+                            }
 //                          downloadBook();
                           }, child: Text('Download '+book['extension']+' ( '+book['size']+' )',style: TextStyle(color: Colors.white),),
                             color: Colors.blue,

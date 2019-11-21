@@ -112,13 +112,13 @@ class HomePageState extends State<HomePage> {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            child: Icon(Icons.account_circle, size: 100, ),
-//            decoration: BoxDecoration(
-//              color: Colors.white,
-//            ),
+            decoration: BoxDecoration(
+              image: DecorationImage(image: AssetImage('assets/header.jpg', ), fit: BoxFit.cover),
+            ),
           ),
           ListTile(
-            title: Text('Favourites'),
+            title: Text('Favourites', textAlign: TextAlign.left,),
+            trailing: Icon(Icons.star, color: Colors.yellow,),
             onTap: () {
               // Update the state of the app
               // ...
@@ -128,6 +128,7 @@ class HomePageState extends State<HomePage> {
           ),
           ListTile(
             title: Text('Downloads'),
+            trailing: Icon(Icons.file_download),
             onTap: () {
               // Update the state of the app
               // ...
@@ -137,6 +138,20 @@ class HomePageState extends State<HomePage> {
                 return Downloads();
               }));
 
+            },
+          ),
+          ListTile(
+            title: Text('Share App'),
+            trailing: Icon(Icons.share),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('About Us'),
+            trailing: Icon(Icons.person),
+            onTap: () {
+              Navigator.pop(context);
             },
           ),
         ],
