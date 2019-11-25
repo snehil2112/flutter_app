@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart' as prefix1;
 import 'package:flutter/services.dart';
+import 'package:flutter_app/model/favorite.dart';
+import 'package:flutter_app/utils/database_helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'dart:io' as io;
@@ -21,6 +23,8 @@ class Detail extends StatefulWidget {
 }
 
 class _DetailState extends State<Detail> {
+
+  DatabaseHelper databaseHelper = DatabaseHelper();
   CancelToken cancel;
   bool downloading = false;
   bool downloaded = false;
@@ -32,7 +36,7 @@ class _DetailState extends State<Detail> {
   bool _permissionReady;
   String _localPath;
   ReceivePort _port = ReceivePort();
-
+  bool liked = false;
 
   @override
   void dispose() {
@@ -52,6 +56,7 @@ class _DetailState extends State<Detail> {
     _prepare();
     super.initState();
     book = widget.book;
+    checkIfLiked();
   }
 
   void _requestDownload(_TaskInfo task) async {
@@ -184,6 +189,38 @@ FlutterShare.share(
       _isLoading = false;
     });
   }
+
+  void checkIfLiked() async{
+
+    var like = await databaseHelper.fetchBookById(book['id']);
+
+    if(like.length != 0){
+      setState(() {
+        liked = true;
+      });
+    }
+  }
+  
+  void like() async{
+
+    int result = await databaseHelper.insertBook(FavouriteBook(book['id'], book['title'], book['volume'], book['series'], book['author'], book['edition'], book['publisher'], book['city'], book['pages'], book['language'], book['download'], book['cover'], book['size'], book['year'], book['description'], book['topic'], book['extension']));
+    if(result != 0){
+      setState(() {
+        liked = true;
+//        Scaffold.of(context).showSnackBar(SnackBar(content: Text('Book added to favourites'),));
+      });
+//      print(result);
+    }
+  }
+
+  void dislike() async {
+    int result = await databaseHelper.deleteBook(book['id']);
+    if(result != 0) {
+      setState(() {
+        liked = false;
+      });
+    }
+  }
   
   prefix0.Future<String> _findLocalPath() async {
     final directory = Theme.of(context).platform == TargetPlatform.android
@@ -253,7 +290,26 @@ FlutterShare.share(
                 children: <Widget>[
                   Text(book['title'], style: TextStyle(color: Colors.black, fontSize: 22.0),textAlign: TextAlign.left,),
                   Padding(padding: EdgeInsets.only(top: 5.0),),
-                Text(book['author'], style: TextStyle(color: Colors.grey[800], fontSize: 16.0),textAlign: TextAlign.left,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(book['author'], style: TextStyle(color: Colors.grey[800], fontSize: 16.0),textAlign: TextAlign.left,),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if(!liked){
+                            like();
+                            Scaffold.of(context).showSnackBar(SnackBar(content: Text('Book added to favourites'),));
+                        } else{
+                          dislike();
+                          Scaffold.of(context).showSnackBar(SnackBar(content: Text('Book removed to favourites'),));
+                        }
+                      },
+                      child: liked?Icon(Icons.favorite, color: Colors.redAccent,):Icon(Icons.favorite_border),
+                    )
+                  ],
+                ),
                 Padding(padding: EdgeInsets.only(top: 5.0),),
                 Text(book['publisher'], style: TextStyle(color: Colors.grey[600], fontSize: 16.0),textAlign: TextAlign.left,),
                 Padding(padding: EdgeInsets.only(top: 10.0)),

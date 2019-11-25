@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter_app/downloads.dart';
+import 'package:flutter_app/favourites.dart';
 import 'package:flutter_app/recommended.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 
@@ -118,12 +119,15 @@ class HomePageState extends State<HomePage> {
           ),
           ListTile(
             title: Text('Favourites', textAlign: TextAlign.left,),
-            trailing: Icon(Icons.star, color: Colors.yellow,),
+            trailing: Icon(Icons.favorite, color: Colors.redAccent,),
             onTap: () {
               // Update the state of the app
               // ...
               // Then close the drawer
               Navigator.pop(context);
+              prefix0.Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return Favourites();
+              }));
             },
           ),
           ListTile(
